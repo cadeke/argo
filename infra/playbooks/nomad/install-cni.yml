@@ -1,0 +1,60 @@
+- name: Install CNI plugins for Consul Connect
+  hosts: all
+  become: yes
+  vars_files:
+    - ../../inventory/secrets.yml
+
+  tasks:
+    - name: Download CNI plugins tarball
+      get_url:
+        url: https://github.com/containernetworking/plugins/releases/download/v1.3.0/cni-plugins-linux-amd64-v1.3.0.tgz
+        dest: /tmp/cni-plugins.tgz
+        mode: "0644"
+
+    - name: Create extraction directory at /tmp/cni-plugins
+      file:
+        path: /tmp/cni-plugins
+        state: directory
+        mode: "0755"
+
+    - name: Extract the tarball into /tmp/cni-plugins (strip top-level directory)
+      unarchive:
+        src: /tmp/cni-plugins.tgz
+        dest: /tmp/cni-plugins
+        remote_src: yes
+        extra_opts: --strip-components=1
+
+    - name: Ensure target directory /opt/cni/bin exists
+      file:
+        path: /opt/cni/bin
+        state: directory
+        mode: "0755"
+
+    - name: Copy extracted plugins to /opt/cni/bin
+      copy:
+        src: /tmp/cni-plugins/
+        dest: /opt/cni/bin/
+        remote_src: yes
+        owner: root
+        group: root
+
+    - name: Restart Nomad to load new plugins
+      systemd:
+        name: nomad
+        state: restarted
+      become: yes
+
+    - name: Wait for Nomad to fully initialize
+      ansible.builtin.pause:
+        seconds: 15
+      become: no
+
+    - name: Check CNI versions in Nomad
+      become: no
+      changed_when: false
+      shell: "nomad node status -self -verbose | grep cni"
+      register: nomad_cni_check
+
+    - name: Display results
+      debug:
+        msg: "{{ nomad_cni_check.stdout_lines }}"

@@ -1,0 +1,149 @@
+@import url("https://fonts.googleapis.com/css2?family=Mako&display=swap");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+
+body {
+  font-family: "Mako", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+  min-height: 100vh;
+}
+
+.container_menu {
+  background-color: white;
+  padding: 3rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  width: 100%;
+}
+
+.header {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0.5rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 5px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button i.material-icons {
+  margin-right: 0.5rem;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+.getBtn {
+  background-color: #a0d8f1;
+}
+
+.addBtn {
+  background-color: #a8e6cf;
+}
+
+.updateBtn {
+  background-color: #ffd3b6;
+}
+
+.deleteBtn {
+  background-color: #ffaaa5;
+}
+
+.content {
+  width: 100%;
+  max-width: 800px;
+}
+
+.form-container {
+  background-color: #f8f8f8;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+}
+
+.form-container input {
+  width: calc(100% - 1rem);
+  margin: 0.5rem 0;
+  padding: 1rem;
+  border-radius: 5px;
+  border: 1px solid #eceaea;
+  font-size: 16px;
+  background-color: #fff;
+}
+
+.form-container button {
+  margin-top: 1rem;
+  padding: 0.8rem 1.3rem;
+  border-radius: 5px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.form-container button:hover {
+  transform: translateY(-2px);
+}
+
+.form-label {
+  font-weight: bolder;
+  font-family: "Franklin Gothic Medium", Arial, sans-serif;
+  display: block;
+  margin-top: 1rem;
+}
+
+/* Table styles */
+.table-container {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+table th {
+  background-color: #404040;
+  color: white;
+  font-weight: bold;
+  font-family: "Franklin Gothic Medium", Arial, sans-serif;
+}
+
+table tr {
+  background-color: white;
+}

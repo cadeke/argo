@@ -1,0 +1,82 @@
+- name: Configure Nomad Cluster
+  hosts: all
+  become: yes
+  vars_files:
+    - ../../inventory/secrets.yml
+  tasks:
+    - name: Ensure Nomad user exists, add to Docker group
+      user:
+        name: nomad
+        system: yes
+        create_home: no
+        shell: /usr/sbin/nologin
+        groups: docker
+        append: yes
+
+    - name: Configure server nodes
+      copy:
+        src: "../../../argo/coe/nomad/server.hcl"
+        dest: "/etc/nomad.d/nomad.hcl"
+        owner: nomad
+        group: nomad
+        mode: "0644"
+      when: "'managers' in group_names"
+
+    - name: Configure client nodes
+      copy:
+        src: "../../../argo/coe/nomad/client.hcl"
+        dest: "/etc/nomad.d/nomad.hcl"
+        owner: nomad
+        group: nomad
+        mode: "0644"
+      when: "'workers' in group_names"
+
+    - name: Create Nomad configuration directory
+      file:
+        path: /etc/nomad.d
+        state: directory
+        owner: nomad
+        group: nomad
+        mode: "0700"
+
+    - name: Create Nomad data directory
+      file:
+        path: /opt/nomad
+        state: directory
+        owner: nomad
+        group: nomad
+        mode: "0700"
+
+    - name: Copy Nomad systemd service file
+      copy:
+        dest: /etc/systemd/system/nomad.service
+        content: |
+          [Unit]
+          Description=Nomad
+          Documentation=https://www.nomadproject.io/docs/
+          Wants=network-online.target
+          After=network-online.target
+
+          [Service]
+          User=nomad
+          Group=nomad
+          ExecReload=/bin/kill -HUP $MAINPID
+          ExecStart=/usr/bin/nomad agent -config /etc/nomad.d
+          KillMode=process
+          KillSignal=SIGINT
+          LimitNOFILE=65536
+          LimitNPROC=infinity
+          Restart=on-failure
+          RestartSec=2
+          TasksMax=infinity
+          OOMScoreAdjust=-1000
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd and enable Nomad service
+      systemd:
+        daemon_reload: yes
+        name: nomad
+        enabled: yes
+        state: started

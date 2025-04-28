@@ -1,0 +1,22 @@
+- name: Testing
+  hosts: all
+  become: true
+  vars_files:
+    - ../../inventory/secrets.yml
+  tasks:
+    - name: Debug ansible_user
+      debug:
+        msg: "The Anible user is {{ ansible_user }}"
+
+    - name: Debug ansible_distribution_release
+      debug:
+        msg: "The Ubuntu release is {{ ansible_distribution_release }}"
+
+    - name: Execute `whoami`
+      shell: whoami
+      register: result
+      changed_when: false
+
+    - name: Show `whoami` output
+      debug:
+        msg: "Current user: {{ result.stdout }}"

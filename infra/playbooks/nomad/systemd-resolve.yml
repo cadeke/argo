@@ -1,0 +1,36 @@
+- name: Rollback to systemd-resolved
+  hosts: workers
+  become: yes
+  vars_files:
+    - ../../inventory/secrets.yml
+
+  tasks:
+    - name: Stop and disable dnsmasq
+      systemd:
+        name: dnsmasq
+        state: stopped
+        enabled: false
+      ignore_errors: true
+
+    - name: Remove custom dnsmasq config for consul (if exists)
+      file:
+        path: /etc/dnsmasq.d/consul
+        state: absent
+
+    - name: Recreate /etc/resolv.conf symlink to systemd stub
+      file:
+        src: /run/systemd/resolve/stub-resolv.conf
+        dest: /etc/resolv.conf
+        state: link
+        force: true
+
+    - name: Re-enable and start systemd-resolved
+      systemd:
+        name: systemd-resolved
+        enabled: true
+        state: started
+
+    - name: Ensure resolv.conf contains 127.0.0.53 again
+      command: resolvectl status
+      register: resolvectl_output
+      changed_when: false

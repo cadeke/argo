@@ -1,0 +1,308 @@
+[
+    {
+      "id": 1,
+      "ip": "93.184.216.34",
+      "domain": "example.com",
+      "server": "8.8.8.8"
+    },
+    {
+      "id": 2,
+      "ip": "8.8.8.8",
+      "domain": "google.com",
+      "server": "8.8.8.8"
+    },
+    {
+      "id": 3,
+      "ip": "142.250.190.46",
+      "domain": "youtube.com",
+      "server": "8.8.8.8"
+    },
+    {
+      "id": 4,
+      "ip": "142.251.33.229",
+      "domain": "gmail.com",
+      "server": "8.8.8.8"
+    },
+    {
+      "id": 5,
+      "ip": "142.250.185.78",
+      "domain": "maps.google.com",
+      "server": "8.8.8.8"
+    },
+    {
+      "id": 6,
+      "ip": "142.250.188.206",
+      "domain": "news.google.com",
+      "server": "8.8.8.8"
+    },
+    {
+      "id": 7,
+      "ip": "142.250.187.78",
+      "domain": "drive.google.com",
+      "server": "8.8.8.8"
+    },
+    {
+      "id": 8,
+      "ip": "142.250.180.78",
+      "domain": "play.google.com",
+      "server": "8.8.8.8"
+    },
+    {
+      "id": 9,
+      "ip": "172.217.10.238",
+      "domain": "meet.google.com",
+      "server": "8.8.8.8"
+    },
+    {
+      "id": 10,
+      "ip": "172.217.9.206",
+      "domain": "photos.google.com",
+      "server": "8.8.8.8"
+    },
+    {
+      "id": 11,
+      "ip": "104.16.132.229",
+      "domain": "cloudflare.com",
+      "server": "1.1.1.1"
+    },
+    {
+      "id": 12,
+      "ip": "1.1.1.1",
+      "domain": "1.1.1.1",
+      "server": "1.1.1.1"
+    },
+    {
+      "id": 13,
+      "ip": "93.184.216.34",
+      "domain": "example.net",
+      "server": "1.1.1.1"
+    },
+    {
+      "id": 14,
+      "ip": "208.80.154.224",
+      "domain": "wikipedia.org",
+      "server": "1.1.1.1"
+    },
+    {
+      "id": 15,
+      "ip": "162.159.135.232",
+      "domain": "discord.com",
+      "server": "1.1.1.1"
+    },
+    {
+      "id": 16,
+      "ip": "162.159.152.4",
+      "domain": "medium.com",
+      "server": "1.1.1.1"
+    },
+    {
+      "id": 17,
+      "ip": "104.248.78.23",
+      "domain": "notion.so",
+      "server": "1.1.1.1"
+    },
+    {
+      "id": 18,
+      "ip": "140.82.114.3",
+      "domain": "github.com",
+      "server": "1.1.1.1"
+    },
+    {
+      "id": 19,
+      "ip": "104.244.42.129",
+      "domain": "twitter.com",
+      "server": "1.1.1.1"
+    },
+    {
+      "id": 20,
+      "ip": "157.240.22.35",
+      "domain": "facebook.com",
+      "server": "1.1.1.1"
+    },
+    {
+      "id": 21,
+      "ip": "208.67.222.222",
+      "domain": "opendns.com",
+      "server": "208.67.222.222"
+    },
+    {
+      "id": 22,
+      "ip": "108.174.10.10",
+      "domain": "linkedin.com",
+      "server": "208.67.222.222"
+    },
+    {
+      "id": 23,
+      "ip": "151.101.129.69",
+      "domain": "stackoverflow.com",
+      "server": "208.67.222.222"
+    },
+    {
+      "id": 24,
+      "ip": "98.138.219.231",
+      "domain": "yahoo.com",
+      "server": "208.67.222.222"
+    },
+    {
+      "id": 25,
+      "ip": "176.32.103.205",
+      "domain": "amazon.com",
+      "server": "208.67.222.222"
+    },
+    {
+      "id": 26,
+      "ip": "204.79.197.200",
+      "domain": "bing.com",
+      "server": "208.67.222.222"
+    },
+    {
+      "id": 27,
+      "ip": "52.250.42.157",
+      "domain": "duckduckgo.com",
+      "server": "208.67.222.222"
+    },
+    {
+      "id": 28,
+      "ip": "52.89.124.206",
+      "domain": "netflix.com",
+      "server": "208.67.222.222"
+    },
+    {
+      "id": 29,
+      "ip": "23.246.0.5",
+      "domain": "hulu.com",
+      "server": "208.67.222.222"
+    },
+    {
+      "id": 30,
+      "ip": "17.253.144.10",
+      "domain": "apple.com",
+      "server": "208.67.222.222"
+    },
+    {
+      "id": 31,
+      "ip": "9.9.9.9",
+      "domain": "quad9.net",
+      "server": "9.9.9.9"
+    },
+    {
+      "id": 32,
+      "ip": "104.215.148.63",
+      "domain": "microsoft.com",
+      "server": "9.9.9.9"
+    },
+    {
+      "id": 33,
+      "ip": "192.147.130.1",
+      "domain": "adobe.com",
+      "server": "9.9.9.9"
+    },
+    {
+      "id": 34,
+      "ip": "199.181.132.250",
+      "domain": "espn.com",
+      "server": "9.9.9.9"
+    },
+    {
+      "id": 35,
+      "ip": "151.101.193.67",
+      "domain": "cnn.com",
+      "server": "9.9.9.9"
+    },
+    {
+      "id": 36,
+      "ip": "151.101.128.81",
+      "domain": "bbc.com",
+      "server": "9.9.9.9"
+    },
+    {
+      "id": 37,
+      "ip": "151.101.65.140",
+      "domain": "reddit.com",
+      "server": "9.9.9.9"
+    },
+    {
+      "id": 38,
+      "ip": "151.101.64.84",
+      "domain": "pinterest.com",
+      "server": "9.9.9.9"
+    },
+    {
+      "id": 39,
+      "ip": "23.40.242.42",
+      "domain": "tiktok.com",
+      "server": "9.9.9.9"
+    },
+    {
+      "id": 40,
+      "ip": "35.186.224.25",
+      "domain": "spotify.com",
+      "server": "9.9.9.9"
+    },
+    {
+      "id": 42,
+      "ip": "192.168.0.1",
+      "domain": "localnetwork.com",
+      "server": "192.168.1.1"
+    },
+    {
+      "id": 43,
+      "ip": "203.0.113.1",
+      "domain": "mywebsite.com",
+      "server": "192.168.1.1"
+    },
+    {
+      "id": 44,
+      "ip": "198.51.100.1",
+      "domain": "testdomain.com",
+      "server": "192.168.1.1"
+    },
+    {
+      "id": 45,
+      "ip": "192.0.2.1",
+      "domain": "exampledomain.net",
+      "server": "192.168.1.1"
+    },
+    {
+      "id": 46,
+      "ip": "203.0.113.45",
+      "domain": "fictionalsite.com",
+      "server": "192.168.1.1"
+    },
+    {
+      "id": 47,
+      "ip": "192.88.99.1",
+      "domain": "randompage.net",
+      "server": "192.168.1.1"
+    },
+    {
+      "id": 48,
+      "ip": "192.18.43.1",
+      "domain": "privatehost.net",
+      "server": "192.168.1.1"
+    },
+    {
+      "id": 49,
+      "ip": "203.0.113.99",
+      "domain": "experimental.com",
+      "server": "192.168.1.1"
+    },
+    {
+      "id": 50,
+      "ip": "198.51.100.99",
+      "domain": "unusedsite.com",
+      "server": "192.168.1.1"
+    },
+    {
+      "id": 51,
+      "ip": "1.2.3.4",
+      "domain": "my.custom.domain",
+      "server": "192.168.1.1"
+    },
+    {
+      "id": 52,
+      "ip": "192.168.1.1",
+      "domain": "customdns.net",
+      "server": "192.168.1.1"
+    }
+  ]

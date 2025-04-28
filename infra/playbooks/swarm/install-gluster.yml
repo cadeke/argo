@@ -1,0 +1,26 @@
+- name: Install and configure GlusterFS server
+  hosts: all
+  become: true
+  vars_files:
+    - ../../inventory/secrets.yml
+  tasks:
+    - name: Install GlusterFS server
+      apt:
+        name: glusterfs-server
+        state: present
+        update_cache: true
+
+    - name: Start the GlusterFS service
+      service:
+        name: glusterd
+        state: started
+        enabled: true
+
+    - name: Check the status of GlusterFS service
+      command: systemctl status glusterd --no-pager
+      register: glusterd_status
+      changed_when: false
+
+    - name: Display GlusterFS service status
+      debug:
+        msg: "{{ glusterd_status.stdout }}"

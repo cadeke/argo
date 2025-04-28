@@ -1,0 +1,325 @@
+services:
+  # APIS
+  query-api:
+    image: cadeke/argo-q-api:latest
+    ports:
+      - "8001:8080"
+    depends_on:
+      - postgres
+      - memcached
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      MEMCACHED_HOST: memcached
+      MEMCACHED_PORT: 11211
+    networks:
+      - dbs
+      - apis
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+
+  admin-api:
+    image: cadeke/argo-a-api:latest
+    ports:
+      - "8002:8080"
+    depends_on:
+      - postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+    networks:
+      - dbs
+      - apis
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+
+  # WEBSITES
+  query-site:
+    image: cadeke/argo-q-site:latest
+    ports:
+      - "8003:80"
+    depends_on:
+      - query-api
+    environment:
+      VITE_API_HOST: query-api
+      VITE_API_PORT: 8080
+    networks:
+      - sites
+      - apis
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+
+  admin-site:
+    image: cadeke/argo-a-site:latest
+    ports:
+      - "8004:80"
+    depends_on:
+      - a-api
+    environment:
+      VITE_API_HOST: admin-api
+      VITE_API_PORT: 8080
+    networks:
+      - sites
+      - apis
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+
+  # APPS
+  ot-app:
+    image: cadeke/argo-ot-app:v1.0
+    depends_on:
+      - query-api
+    environment:
+      QUERY_HOST: query-api
+      QUERY_PORT: 8080
+    networks:
+      - apis
+    deploy:
+      mode: replicated
+      replicas: 4
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 5
+        window: 120s
+      placement:
+        constraints:
+          - node.role == worker
+
+  # DATABASES
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - /mnt/argo-storage/postgres:/var/lib/postgresql/data
+    networks:
+      - dbs
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+
+  memcached:
+    image: memcached:latest
+    command: ["-m", "64"]
+    ports:
+      - "11211:11211"
+    networks:
+      - dbs
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+
+  # MONITORING
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - /mnt/argo-storage/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - apis
+      - monitoring
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - /mnt/argo-storage/grafana:/var/lib/grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD_FILE: /run/secrets/grafana_admin_password
+    depends_on:
+      - prometheus
+    networks:
+      - monitoring
+    secrets:
+      - grafana_admin_password
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    ports:
+      - "8085:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    depends_on:
+      - prometheus
+    networks:
+      - monitoring
+    deploy:
+      mode: global
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - "9100:9100"
+    depends_on:
+      - prometheus
+    networks:
+      - monitoring
+    deploy:
+      mode: global
+
+  postgres-exporter:
+    image: wrouesnel/postgres_exporter:latest
+    environment:
+      - DATA_SOURCE_NAME=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+    ports:
+      - "9187:9187"
+    depends_on:
+      - postgres
+      - prometheus
+    networks:
+      - monitoring
+      - dbs
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+
+  # CI/CD
+  # gitlab:
+  #   image: gitlab/gitlab-ce:latest
+  #   hostname: gitlab
+  #   environment:
+  #     GITLAB_OMNIBUS_CONFIG: |
+  #       external_url 'http://localhost:8929'
+  #       gitlab_rails['gitlab_shell_ssh_port'] = 2224
+  #   ports:
+  #     - "8929:8929"
+  #     - "2224:22"
+  #   volumes:
+  #     - /mnt/argo-storage/gitlab/config:/etc/gitlab
+  #     - /mnt/argo-storage/gitlab/logs:/var/log/gitlab
+  #     - /mnt/argo-storage/gitlab/data:/var/opt/gitlab
+  #   networks:
+  #     - argo-backend
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 1
+  #     placement:
+  #       constraints:
+  #         - node.role == worker
+  #
+  # gitlab-runner:
+  #   image: gitlab/gitlab-runner:latest
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - /mnt/argo-storage/gitlab-runner/config:/etc/gitlab-runner
+  #   depends_on:
+  #     - gitlab
+  #   networks:
+  #     - argo-backend
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 2
+  #     placement:
+  #       constraints:
+  #         - node.role == worker
+
+  # DEBUG
+  debug:
+    image: nicolaka/netshoot:latest
+    command: ["sleep", "infinity"]
+    networks:
+      - monitoring
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+
+networks:
+  sites:
+    driver: overlay
+    driver_opts:
+      encrypted: "true"
+    ipam:
+      config:
+        - subnet: 192.168.0.0/18
+
+  apis:
+    driver: overlay
+    driver_opts:
+      encrypted: "true"
+    ipam:
+      config:
+        - subnet: 192.168.64.0/18
+
+  dbs:
+    driver: overlay
+    driver_opts:
+      encrypted: "true"
+    ipam:
+      config:
+        - subnet: 192.168.128.0/18
+
+  monitoring:
+    driver: overlay
+    driver_opts:
+      encrypted: "true"
+    ipam:
+      config:
+        - subnet: 192.168.192.0/18
+
+secrets:
+  grafana_admin_password:
+    external: true

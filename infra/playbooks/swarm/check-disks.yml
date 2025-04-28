@@ -1,0 +1,12 @@
+---
+- name: Check disk layout on all hosts
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Run lsblk to check disk layout in JSON format
+      command: lsblk -J
+      register: lsblk_output
+
+    - name: Print formatted lsblk output
+      debug:
+        msg: "{{ lsblk_output.stdout | from_json | to_nice_yaml }}"

@@ -1,0 +1,21 @@
+- name: Join worker nodes to the Docker Swarm cluster
+  hosts: workers
+  vars:
+    - manager_ip: 10.203.96.230
+  vars_files:
+    - ../../inventory/secrets.yml
+  tasks:
+    - name: Ensure Docker is installed
+      command: docker --version
+      register: docker_check
+      failed_when: docker_check.rc != 0
+
+    - name: Join worker nodes to the Swarm
+      command: docker swarm join --token {{ swarm_worker_token }} {{ manager_ip }}:2377
+      when: swarm_worker_token is defined and manager_ip is defined
+      register: swarm_join
+      changed_when: "'This node is already part of a swarm' not in swarm_join.stderr"
+
+    - name: Show join output
+      debug:
+        msg: "{{ swarm_join.stdout }}"

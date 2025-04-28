@@ -1,0 +1,17 @@
+- name: Check contents of /mnt/argo-storage/testfile.txt
+  hosts: all
+  tasks:
+    - name: Read file contents
+      command: cat /mnt/argo-storage/testfile.txt
+      register: file_contents
+      ignore_errors: yes
+
+    - name: Display file contents
+      debug:
+        msg: "{{ file_contents.stdout }}"
+      when: file_contents.rc == 0
+
+    - name: Notify if file does not exist
+      debug:
+        msg: "File /mnt/argo-storage/testfile.txt not found!"
+      when: file_contents.rc != 0

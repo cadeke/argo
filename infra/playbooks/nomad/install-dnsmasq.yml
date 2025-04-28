@@ -1,0 +1,55 @@
+- name: Setup dnsmasq as resolver
+  hosts: all
+  become: yes
+  vars_files:
+    - ../../inventory/secrets.yml
+
+  tasks:
+    - name: Install dnsmasq
+      apt:
+        name: dnsmasq
+        state: present
+        update_cache: true
+
+    - name: Add dnsmasq Consul config
+      copy:
+        dest: /etc/dnsmasq.d/consul.conf
+        content: |
+          # Forward .consul queries to local Consul agent
+          server=/consul/127.0.0.1#8600
+
+          # Fallback DNS resolver
+          server=1.1.1.1
+          server=8.8.8.8
+
+          # Listen addresses
+          listen-address=127.0.0.1
+          listen-address={{ ansible_host }}
+
+    - name: Stop and disable systemd-resolved
+      systemd:
+        name: systemd-resolved
+        state: stopped
+        enabled: false
+
+    - name: Restart dnsmasq
+      systemd:
+        name: dnsmasq
+        state: restarted
+        enabled: true
+
+    - name: Backup existing resolv.conf
+      command: cp /etc/resolv.conf /etc/resolv.conf.backup
+      ignore_errors: true
+
+    - name: Remove /etc/resolv.conf symlink
+      file:
+        path: /etc/resolv.conf
+        state: absent
+        force: true
+
+    - name: Create new /etc/resolv.conf pointing to dnsmasq
+      copy:
+        dest: /etc/resolv.conf
+        content: |
+          nameserver 127.0.0.1

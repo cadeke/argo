@@ -1,0 +1,21 @@
+- name: Update Ubuntu
+  hosts: all
+  become: true
+  vars_files:
+    - ../../inventory/secrets.yml
+  tasks:
+    - name: Update APT package index
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist # Full distribution upgrade
+
+    - name: Remove unused packages
+      apt:
+        autoremove: true
+
+    - name: Clean up APT cache
+      apt:
+        autoclean: true

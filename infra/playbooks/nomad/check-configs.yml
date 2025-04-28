@@ -1,0 +1,43 @@
+- name: Check Nomad and Consul configs
+  hosts: all
+  become: yes
+  vars_files:
+    - ../../inventory/secrets.yml
+
+  tasks:
+    - name: Check Consul config
+      ansible.builtin.slurp:
+        src: /etc/consul.d/consul.hcl
+      register: consul_server_config
+
+    - name: Display Consul config
+      ansible.builtin.debug:
+        msg: "{{ consul_server_config.content | b64decode }}"
+      when: consul_server_config.failed == false
+
+    - name: Check Nomad config
+      ansible.builtin.slurp:
+        src: /etc/nomad.d/nomad.hcl
+      register: nomad_server_config
+
+    - name: Display Nomad config
+      ansible.builtin.debug:
+        msg: "{{ nomad_server_config.content | b64decode }}"
+      when: nomad_server_config.failed == false
+
+    - name: Restart Consul
+      systemd:
+        name: consul
+        state: restarted
+      become: yes
+
+    - name: Sleep
+      ansible.builtin.pause:
+        seconds: 15
+      become: no
+
+    - name: Restart Nomad
+      systemd:
+        name: nomad
+        state: restarted
+      become: yes

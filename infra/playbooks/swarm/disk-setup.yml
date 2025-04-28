@@ -1,0 +1,41 @@
+- name: Automate disk partitioning, formatting, and mounting
+  hosts: all
+  become: true
+  vars_files:
+    - ../../inventory/secrets.yml
+  tasks:
+    - name: Create a new partition on /dev/sdb
+      community.general.parted:
+        device: /dev/sdb
+        number: 1
+        part_start: 1MB
+        part_end: 100%
+        state: present
+        align: optimal
+
+    - name: Format the new partition with XFS filesystem
+      filesystem:
+        fstype: xfs
+        dev: /dev/sdb1
+
+    - name: Create mount point directory
+      file:
+        path: /data/brick1
+        state: directory
+        mode: "0755"
+
+    - name: Add partition entry to /etc/fstab
+      blockinfile:
+        path: /etc/fstab
+        block: |
+          /dev/sdb1 /data/brick1 xfs defaults 0 0
+        create: yes
+        state: present
+
+    - name: Mount the partition
+      mount:
+        path: /data/brick1
+        src: /dev/sdb1
+        fstype: xfs
+        state: mounted
+        opts: defaults

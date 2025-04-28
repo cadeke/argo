@@ -1,0 +1,21 @@
+- name: Set up /etc/hosts entries for all nodes
+  hosts: all
+  become: true
+  vars_files:
+    - ../../inventory/secrets.yml
+  tasks:
+    - name: Ensure /etc/hosts has entries for all hosts
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ item.ansible_host }} {{ item.name }}"
+        create: yes
+        state: present
+      loop:
+        - { name: "vm01", ansible_host: "10.203.96.230" }
+        - { name: "vm02", ansible_host: "10.203.96.231" }
+        - { name: "vm03", ansible_host: "10.203.96.232" }
+        - { name: "vm04", ansible_host: "10.203.96.233" }
+        - { name: "vm05", ansible_host: "10.203.96.115" }
+        - { name: "vm06", ansible_host: "10.203.96.116" }
+        - { name: "vm07", ansible_host: "10.203.96.117" }
+        - { name: "vm08", ansible_host: "10.203.96.118" }

@@ -1,0 +1,47 @@
+- name: Configure directories
+  hosts: all
+  become: true
+  vars_files:
+    - ../../inventory/secrets.yml
+  tasks:
+    - name: Ensure postgres
+      file:
+        path: /mnt/argo-storage/postgres
+        state: directory
+        mode: "0755"
+
+    - name: Ensure prometheus
+      file:
+        path: /mnt/argo-storage/prometheus
+        state: directory
+        mode: "0755"
+
+    - name: Ensure grafana
+      file:
+        path: /mnt/argo-storage/grafana
+        state: directory
+        mode: "0755"
+
+    - name: Ensure gitlab config
+      file:
+        path: /mnt/argo-storage/gitlab/config
+        state: directory
+        mode: "0755"
+
+    - name: Ensure gitlab data
+      file:
+        path: /mnt/argo-storage/gitlab/data
+        state: directory
+        mode: "0755"
+
+    - name: Ensure gitlab logs
+      file:
+        path: /mnt/argo-storage/gitlab/logs
+        state: directory
+        mode: "0755"
+
+    - name: Ensure gitlab-runner
+      file:
+        path: /mnt/argo-storage/gitlab-runner/config
+        state: directory
+        mode: "0755"
